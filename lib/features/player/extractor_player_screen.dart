@@ -145,21 +145,32 @@ class _ExtractorPlayerScreenState extends State<ExtractorPlayerScreen> {
                 InAppWebView(
                   webViewEnvironment: webViewEnvironment,
                   initialUrlRequest: URLRequest(
-                    url: WebUri(widget.initialUrl ?? 'https://vidsrc-embed.ru/embed/movie?tmdb=385687'),
+                    url: WebUri(widget.initialUrl ?? 'https://vidsrc.net/embed/movie?tmdb=385687'),
+                    headers: {
+                      'Referer': 'https://vidsrc.net/',
+                      'Origin': 'https://vidsrc.net',
+                      'Accept-Language': 'en-US,en;q=0.9',
+                    },
                   ),
                   initialSettings: InAppWebViewSettings(
-                    // CRITICAL: Removed useShouldInterceptRequest as it can cause deadlocks/hangs on Windows
                     javaScriptEnabled: true,
                     mediaPlaybackRequiresUserGesture: false,
-                    // Mobile-specific optimization
                     allowsInlineMediaPlayback: true,
                     useOnDownloadStart: true,
-                    // Prevent ads from opening new windows/tabs on your 2GB emulator
                     supportMultipleWindows: false,
                     javaScriptCanOpenWindowsAutomatically: false,
-                    // Use a modern, clean User Agent
-                    userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+                    // Use a very standard mobile User Agent since we're on mobile/emulator
+                    userAgent: "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36",
+                    // Additional stealth settings
+                    disableContextMenu: true,
+                    incognito: true, // Prevents caching of tracking cookies
                   ),
+                  initialUserScripts: [
+                    UserScript(
+                      source: "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});",
+                      injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START,
+                    ),
+                  ],
                   onWebViewCreated: (controller) {
                     webViewController = controller;
                   },
