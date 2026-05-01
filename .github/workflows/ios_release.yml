@@ -29,6 +29,8 @@ jobs:
       - name: Create .env file
         run: |
           echo "TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" > .env
+          echo "TMDB_BASE_URL=https://api.themoviedb.org/3" >> .env
+          echo "TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p/" >> .env
 
       - name: Build unsigned iOS app
         run: flutter build ios --release --no-codesign
